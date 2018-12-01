@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'Bird.dart';
 
 Future<List<Bird>> fetchPost() async {
   List<Bird> birdList = new List();
@@ -22,39 +23,6 @@ Future<List<Bird>> fetchPost() async {
   return birdList;
 }
 
-class Bird {
-  final String speciesCode;
-  final String comName;
-  final String sciName;
-  final String locId;
-  final String locName;
-  final String obsDt;
-  final int howMany;
-  final double lat;
-  final double lng;
-  final bool obsValid;
-  final bool obsReviewed;
-  final bool locationPrivate;
-
-  Bird({this.speciesCode, this.comName, this.sciName, this.locId, this.locName, this.obsDt, this.howMany, this.lat, this.lng, this.obsValid, this.obsReviewed, this.locationPrivate});
-
-  factory Bird.fromJson(Map<String, dynamic> json) {
-    return Bird(
-      speciesCode: json['speciesCode'],
-      comName: json['comName'],
-      sciName: json['sciName'],
-      locId: json['locId'],
-      locName: json['locName'],
-      obsDt: json['obsDt'],
-      howMany: json['howMany'],
-      lat: json['lat'],
-      lng: json['lng'],
-      obsValid: json['obsValid'],
-      obsReviewed: json['obsReviewed'],
-      locationPrivate: json['locationPrivate'],
-    );
-  }
-}
 
 void main() => runApp(MyApp(post: fetchPost()));
 
@@ -62,6 +30,8 @@ class MyApp extends StatelessWidget {
   final Future<List<Bird>> post;
 
   MyApp({Key key, this.post}) : super(key: key);
+
+  BirdData data = new BirdData();
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +49,7 @@ class MyApp extends StatelessWidget {
             future: post,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data.elementAt(1).comName);
+                return data.scrollingBirdList(snapshot.data);
               } else if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               }

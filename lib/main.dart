@@ -55,13 +55,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Bird> birdList = [
-    Bird("grbher3", "Great Blue Herron",
+    Bird.normal("grbher3", "Great Blue Herron",
       "Ardea herodias", "L6439105", "Ole Colony GC", "2018-11-30 16:44",
       2, 33.2566041, -87.5382442, true, false, true),
-    Bird("grbher3", "Great Red Herron",
+    Bird.normal("grbher3", "Great Red Herron",
         "Ardea herodias", "L6439105", "Ole Colony GC", "2018-11-26 16:44",
         2, 33.2566041, -87.5382442, true, false, true),
-    Bird("grbher3", "Great Green Herron",
+    Bird.normal("grbher3", "Great Green Herron",
         "Ardea herodias", "L6439105", "Ole Colony GC", "2018-11-28 16:44",
         2, 33.2566041, -87.5382442, true, false, true),];
   @override

@@ -7,36 +7,43 @@ import 'package:haversine/haversine.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
-class Bird{
-  String speciesCode;//	"grbher3"
-  String comName;//	"Great Blue Heron"
-  String sciName;//	"Ardea herodias"
-  String locId;//	"L6439105"
-  String locName;//	"Ole Colony GC"
-  String obsDt;//	"2018-11-30 16:44"
-  int howMany;//	2
-  double lat;//	33.2566041
-  double lng;//	-87.5382442
-  bool obsValid;//	true
-  bool obsReviewed;//	false
-  bool locationPrivate;//	true
+class Bird {
+  final String speciesCode;
+  final String comName;
+  final String sciName;
+  final String locId;
+  final String locName;
+  final String obsDt;
+  final int howMany;
+  final double lat;
+  final double lng;
+  final bool obsValid;
+  final bool obsReviewed;
+  final bool locationPrivate;
 
-  Bird(String speciesCode, String commonName, String scientificName,
-      String locationID, String locationName, String observationDate, int howMany,
-      double lat, double long, bool valid, bool reviewed, bool locationPrivate
-      ){
-    this.speciesCode = speciesCode;
-    this.comName = commonName;
-    this.sciName = scientificName;
-    this.locId = locationID;
-    this.locName = locationName;
-    this.obsDt = observationDate;
-    this.howMany = howMany;
-    this.lat = lat;
-    this.lng = long;
-    this.obsValid = valid;
-    this.obsReviewed = reviewed;
-    this.locationPrivate = locationPrivate;
+  Bird.normal(this.speciesCode, this.comName, this.sciName, this.locId,
+    this.locName, this.obsDt, this.howMany, this.lat, this.lng,
+    this.obsValid, this.obsReviewed, this.locationPrivate);
+
+  Bird({this.speciesCode, this.comName, this.sciName, this.locId,
+    this.locName, this.obsDt, this.howMany, this.lat, this.lng,
+    this.obsValid, this.obsReviewed, this.locationPrivate});
+
+  factory Bird.fromJson(Map<String, dynamic> json) {
+    return Bird(
+      speciesCode: json['speciesCode'],
+      comName: json['comName'],
+      sciName: json['sciName'],
+      locId: json['locId'],
+      locName: json['locName'],
+      obsDt: json['obsDt'],
+      howMany: json['howMany'],
+      lat: json['lat'],
+      lng: json['lng'],
+      obsValid: json['obsValid'],
+      obsReviewed: json['obsReviewed'],
+      locationPrivate: json['locationPrivate'],
+    );
   }
 }
 
@@ -104,10 +111,13 @@ class BirdData{
           latitude2: latitude,
           longitude2: longitude
       );
-      timeAndDistance += distance.toString() + " away";
+      timeAndDistance += distance.distance().toInt().toString() + "km away";
     }
 
     print(latitude);
+
+    String latString = bird.lat.toString();
+    String lngString = bird.lng.toString();
     return new Card(
       child: new Column(
         mainAxisSize: MainAxisSize.min,
@@ -116,14 +126,13 @@ class BirdData{
             title: Text(titleName),
             subtitle: Text(timeAndDistance),
           ),
+          new Text("Latitude = "+ latString + "Longitude = " + lngString),
           ButtonTheme.bar( // make buttons use the appropriate styles for cards
             child: ButtonBar(
               children: <Widget>[
                 FlatButton(
                   child: const Text('Map Location'),
                   onPressed: () {
-                    String latString = bird.lat.toString();
-                    String lngString = bird.lng.toString();
                     launch("https://www.google.com/maps/search/?api=1&query=" + latString + "," + lngString);
                     //https://www.google.com/maps/search/?api=1&query=36.26577,-92.54324
                   },
