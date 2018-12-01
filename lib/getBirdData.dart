@@ -3,20 +3,26 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-Future<Post> fetchPost() async {
+Future<List<Bird>> fetchPost() async {
+  List<Bird> birdList = new List();
   final response =
   await http.get('https://ebird.org/ws2.0/data/obs/geo/recent?lat=33.217816&lng=-87.54453&key=rdq6kt3tn5fv');
 
   if (response.statusCode == 200) {
     // If the call to the server was successful, parse the JSON
-    return Post.fromJson(json.decode(response.body));
+    var test =  json.decode(response.body);
+    debugPrint("TestOutput"+test.toString());
+    for (var other in test){
+      birdList.add(Bird.fromJson(other));
+    }
   } else {
     // If that call was not successful, throw an error.
     throw Exception('Failed to load post');
   }
+  return birdList;
 }
 
-class Post {
+class Bird {
   final String speciesCode;
   final String comName;
   final String sciName;
@@ -30,10 +36,10 @@ class Post {
   final bool obsReviewed;
   final bool locationPrivate;
 
-  Post({this.speciesCode, this.comName, this.sciName, this.locId, this.locName, this.obsDt, this.howMany, this.lat, this.lng, this.obsValid, this.obsReviewed, this.locationPrivate});
+  Bird({this.speciesCode, this.comName, this.sciName, this.locId, this.locName, this.obsDt, this.howMany, this.lat, this.lng, this.obsValid, this.obsReviewed, this.locationPrivate});
 
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
+  factory Bird.fromJson(Map<String, dynamic> json) {
+    return Bird(
       speciesCode: json['speciesCode'],
       comName: json['comName'],
       sciName: json['sciName'],
@@ -53,7 +59,7 @@ class Post {
 void main() => runApp(MyApp(post: fetchPost()));
 
 class MyApp extends StatelessWidget {
-  final Future<Post> post;
+  final Future<List<Bird>> post;
 
   MyApp({Key key, this.post}) : super(key: key);
 
@@ -69,11 +75,11 @@ class MyApp extends StatelessWidget {
           title: Text('Fetch Data Example'),
         ),
         body: Center(
-          child: FutureBuilder<Post>(
+          child: FutureBuilder<List<Bird>>(
             future: post,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data.comName);
+                return Text(snapshot.data.elementAt(1).comName);
               } else if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               }
