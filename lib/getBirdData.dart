@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'Bird.dart';
 
-Future<List<Bird>> fetchPost() async {
+Future<List<Bird>> fetchPost({double latitude = 33.217816, double longitude = -87.54453}) async {
   List<Bird> birdList = new List();
   final response =
   await http.get('https://ebird.org/ws2.0/data/obs/geo/recent?lat=33.217816&lng=-87.54453&key=rdq6kt3tn5fv');
