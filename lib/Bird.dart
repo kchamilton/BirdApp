@@ -50,7 +50,7 @@ class Bird {
 
 class BirdData{
 
-  /*Future<void> getLocation() async{
+  Future<void> getLocation() async{
     var currentLocation = <String, double>{};
     var location = new Location();
     try {
@@ -63,11 +63,11 @@ class BirdData{
     } on PlatformException {
       currentLocation = null;
     }
-  }*/
+  }
 
-  /*BirdData(){
+  BirdData(){
     getLocation();
-  }*/
+  }
   double latitude;
   double longitude;
 
@@ -127,10 +127,10 @@ class BirdData{
       double lat2 = latitude;
       double lon2 = longitude;
       var gcd = new Haversine.fromDegrees(latitude1: lat1, latitude2: lat2, longitude2: lon2, longitude1: lon1);
-      timeAndDistance += (gcd.distance()/1000).toInt().toString() + "km away";
+      timeAndDistance += ((gcd.distance()~/100).toInt()/10).toString() + "km away";
     }
 
- /*   if()*/
+
 
     print(latitude);
 
