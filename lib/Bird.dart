@@ -74,10 +74,25 @@ class BirdData{
   Widget scrollingBirdList(List<Bird> birdDataList){
     Stream<Bird> birdDataStream = Stream.fromIterable(birdDataList);
 
-
     return new StreamBuilder(
         stream: birdDataStream,
         builder: (BuildContext context, AsyncSnapshot<Bird> snapshot){
+          if(birdDataList.isEmpty)
+            return new Card(
+              child: new Center(
+                child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      new Title(
+                        child: new Text("No Birds Found: \nPlease expand search terms", textScaleFactor: 2.0,textAlign: TextAlign.center,),
+                        color: Colors.black,
+                      ),
+                      new Image.asset("icon/icon.png"),
+                    ],
+                )
+              )
+            );
           return new ListView(
             children: generateAllTiles(birdDataList),
           );
@@ -127,7 +142,7 @@ class BirdData{
             title: Text(titleName),
             subtitle: Text(timeAndDistance),
           ),
-          new Text("Latitude = "+ latString + "Longitude = " + lngString),
+          //new Text("Latitude = "+ latString + "Longitude = " + lngString),
           ButtonTheme.bar( // make buttons use the appropriate styles for cards
             child: ButtonBar(
               children: <Widget>[

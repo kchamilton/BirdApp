@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:numberpicker/numberpicker.dart';
+import 'package:location/location.dart';
+import 'package:flutter/services.dart';
 
 import 'Bird.dart';
+import 'getBirdData.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,11 +16,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: "Bird's Eye View",
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: "Bird's Eye View"),
     );
   }
 }
@@ -41,49 +45,149 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  Future<List<Bird>> birdFuture;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  BirdData birdData = new BirdData();
+
+  NumberPicker searchRadiusPicker;
+  NumberPicker daysPicker;
+
+  int searchRadius = 5;
+  int searchDays = 4;
+
+  var latitude;
+  var longitude;
+
+
+  Future<void> getLocation() async{
+    var currentLocation = <String, double>{};
+    var location = new Location();
+    try {
+      currentLocation = await location.getLocation();
+      latitude = currentLocation["latitude"];
+      longitude = currentLocation["longitude"];
+
+      print("Lat/long Found -=-=-=-=-=-=-=-=-=-=-=-=-=" + latitude.toString());
+
+    } on PlatformException {
+      currentLocation = null;
+    }
   }
 
-  List<Bird> birdList = [
-    Bird.normal("grbher3", "Great Blue Herron",
-      "Ardea herodias", "L6439105", "Ole Colony GC", "2018-11-30 16:44",
-      2, 33.2566041, -87.5382442, true, false, true),
-    Bird.normal("grbher3", "Great Red Herron",
-        "Ardea herodias", "L6439105", "Ole Colony GC", "2018-11-26 16:44",
-        2, 33.2566041, -87.5382442, true, false, true),
-    Bird.normal("grbher3", "Great Green Herron",
-        "Ardea herodias", "L6439105", "Ole Colony GC", "2018-11-28 16:44",
-        2, 33.2566041, -87.5382442, true, false, true),];
+  _handleSearchChanged(num value){
+    if(value != null){
+      setState(() {
+        searchRadius = value;
+        birdFuture = null;
+        birdFuture = fetchPost(
+          latitude: latitude,
+          longitude: longitude,
+          distance: searchRadius,
+          days: searchDays,
+        );
+      });
+    }
+  }
+  _handleDaysChanged(num value){
+    if(value != null){
+      setState(() {
+        searchDays = value;
+        birdFuture = null;
+        birdFuture = fetchPost(
+          latitude: latitude,
+          longitude: longitude,
+          distance: searchRadius,
+          days: searchDays,
+        );
+      });
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     birdData = new BirdData();
+    var test = getLocation();
+    test.then((onValue){
+      birdFuture = fetchPost(
+        latitude: latitude,
+        longitude: longitude,
+        distance: searchRadius,
+        days: searchDays,
+      );
+    });
+
     super.initState();
   }
 
 
   @override
   Widget build(BuildContext context) {
-     return Scaffold(
+    searchRadiusPicker = new NumberPicker.integer(
+      initialValue: searchRadius,
+      minValue: 1,
+      maxValue: 50,
+      onChanged:_handleSearchChanged,
+    );
+    daysPicker = new NumberPicker.integer(
+      initialValue: searchDays,
+      minValue: 1,
+      maxValue: 30,
+      onChanged:_handleDaysChanged,
+    );
+    //birdFuture = fetchPost();
+
+    return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+       title: Text(widget.title),
       ),
-      body: birdData.scrollingBirdList(birdList),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: Center(
+       child: FutureBuilder<List<Bird>>(
+         future: birdFuture,
+         builder: (context, snapshot) {
+           if (snapshot.hasData) {
+             return birdData.scrollingBirdList(snapshot.data);
+           } else if (snapshot.hasError) {
+             return Text("${snapshot.error}");
+           }
+           // By default, show a loading spinner
+           return CircularProgressIndicator();
+         },
+         ),
+      ),
+      drawer: new Drawer(
+        child: ListView(
+          children: <Widget>[
+            DrawerHeader(
+              child: new Image.asset("icon/icon.png"),
+            ),
+            Card (
+              child: new Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    new Title(
+                        color: Colors.black,
+                        child: new Text("Search Distance"),
+                    ),
+                    searchRadiusPicker,
+                  ],
+              ),
+            ),
+            Card(
+              child: new Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  new Title(
+                    color: Colors.black,
+                    child: new Text("Days to Search"),
+                  ),
+                  daysPicker,
+                ],
+              ),
+            ),
+          ]
+        ),
+      )
     );
   }
 }
