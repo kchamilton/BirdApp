@@ -45,15 +45,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<List<Bird>> birdFuture;
-
   BirdData birdData = new BirdData();
+  Future<List<Bird>> birdFuture = null;
+
 
   NumberPicker searchRadiusPicker;
   NumberPicker daysPicker;
 
-  int searchRadius = 5;
-  int searchDays = 4;
+  int searchRadius = 15;
+  int searchDays = 7;
 
   var latitude;
   var longitude;
