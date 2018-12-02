@@ -7,7 +7,7 @@ import 'Bird.dart';
 Future<List<Bird>> fetchPost({double latitude = 33.217816, double longitude = -87.54453}) async {
   List<Bird> birdList = new List();
   final response =
-  await http.get('https://ebird.org/ws2.0/data/obs/geo/recent?lat=33.217816&lng=-87.54453&key=rdq6kt3tn5fv');
+  await http.get('https://ebird.org/ws2.0/data/obs/geo/recent?lat=' + latitude.toString() + '&lng=' + longitude.toString() + '&key=rdq6kt3tn5fv');
 
   if (response.statusCode == 200) {
     // If the call to the server was successful, parse the JSON
