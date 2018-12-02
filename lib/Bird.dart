@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -105,13 +106,13 @@ class BirdData{
     }
     if(bird.lat != null && bird.lng != null
       && latitude != null && longitude != null){
-      Haversine distance = new Haversine.fromDegrees(
-          latitude1: bird.lat,
-          longitude1: bird.lng,
-          latitude2: latitude,
-          longitude2: longitude
-      );
-      timeAndDistance += distance.distance().toInt().toString() + "km away";
+
+      double lat1 = bird.lat;
+      double lon1 = bird.lng;
+      double lat2 = latitude;
+      double lon2 = longitude;
+      var gcd = new Haversine.fromDegrees(latitude1: lat1, latitude2: lat2, longitude2: lon2, longitude1: lon1);
+      timeAndDistance += (gcd.distance()/1000).toInt().toString() + "km away";
     }
 
     print(latitude);
