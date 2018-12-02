@@ -84,10 +84,10 @@ class BirdData{
                   mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      new Title(
+                      /*new Title(
                         child: new Text("No Birds Found: \nPlease expand search terms", textScaleFactor: 2.0,textAlign: TextAlign.center,),
                         color: Colors.black,
-                      ),
+                      ),*/
                       new Image.asset("icon/icon.png"),
                     ],
                 )

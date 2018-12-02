@@ -109,6 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
     birdData = new BirdData();
     var test = getLocation();
     test.then((onValue){
+      birdFuture = null;
       birdFuture = fetchPost(
         latitude: latitude,
         longitude: longitude,
@@ -135,7 +136,14 @@ class _MyHomePageState extends State<MyHomePage> {
       maxValue: 30,
       onChanged:_handleDaysChanged,
     );
-    //birdFuture = fetchPost();
+    if(birdFuture == null){
+      birdFuture = fetchPost(
+        latitude: latitude,
+        longitude: longitude,
+        distance: searchRadius,
+        days: searchDays,
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
