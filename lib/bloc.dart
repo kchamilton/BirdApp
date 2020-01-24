@@ -27,10 +27,6 @@ class Bloc {
     position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     List<Bird> birdList = await getData(
         latitude: position.latitude, longitude: position.longitude, distance: searchRadius, days: searchTime);
-    if (birdList == null) {
-      //TODO Make this return something that will show a graceful failure message to the user...
-      return;
-    }
     _subjectBirdList.sink.add(birdList);
   }
 
@@ -38,10 +34,6 @@ class Bloc {
     debugPrint("RefreshNoLocation Called");
     List<Bird> birdList = await getData(
         latitude: position.latitude, longitude: position.longitude, distance: searchRadius, days: searchTime);
-    if (birdList == null) {
-      //TODO Make this return something that will show a graceful failure message to the user...
-      return;
-    }
     _subjectBirdList.sink.add(birdList);
   }
 
@@ -58,13 +50,12 @@ class Bloc {
         '&back=' +
         days.toString() +
         '&key=rdq6kt3tn5fv';
-//    print(request);
     List birdList = new List<Bird>();
     int tries = 0;
-    while (tries < 5) {
+    while (tries < 1) {
       tries++;
       final httpResponse = await http.get(request);
-      print("Request Returned # ${tries.toString()}");
+//      print("Request Returned # ${httpResponse.statusCode.toString()} -- ${httpResponse.body.toString()}");
       if (httpResponse.statusCode == 200) {
         // If the call to the server was successful, parse the JSON
         var responseJSON = json.decode(httpResponse.body);
@@ -72,10 +63,14 @@ class Bloc {
         for (var record in responseJSON) {
           double distanceInMeters =
               await Geolocator().distanceBetween(latitude, longitude, record["lat"], record["lng"]);
+          print(distanceInMeters.toString());
           birdList.add(Bird.fromJson(record, distanceInMeters));
         }
         return birdList;
       }
+      print(request);
+      print("Request $request Returned # ${httpResponse.statusCode.toString()} -- ${httpResponse.body.toString()}");
+
     }
     return null;
   }
