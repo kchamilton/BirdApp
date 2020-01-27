@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'Bird.dart';
 import 'bloc.dart';
 
-Widget magicTest(Bloc bloc){
+Widget birdListBuilder(Bloc bloc){
   return StreamBuilder(
     stream: bloc.birdListObservable,
     builder: (context, list){
@@ -37,7 +37,9 @@ Widget magicTest(Bloc bloc){
       return ListView.builder(itemCount: list.data.length, itemBuilder: (context, index){
         var bird = list.data[index];
         String titleName = bird.comName ?? "Missing Name";
-        String timeAndDistance = "${bird.distance} km away";
+        var daysAgo = DateTime.now().difference(DateTime.parse(bird.obsDt)).inDays;
+        String timeAndDistance = "Seen $daysAgo day${daysAgo == 1 ? "" : "s"} ago "
+            "${(bird.distance / 1000).toStringAsFixed(2)} km away";
         String latString = bird.lat.toString();
         String lngString = bird.lng.toString();
         return new Card(

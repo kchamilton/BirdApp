@@ -37,8 +37,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-//  BirdData birdData = new BirdData();
-  Future<List<Bird>> birdFuture = null;
 
   NumberPicker searchRadiusPicker;
   NumberPicker daysPicker;
@@ -51,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    bloc.refreshWithLocation(searchRadius, searchDays);
     super.initState();
   }
 
@@ -102,53 +101,48 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(future: bloc.fetchLocation(), builder: (context, snapshot){
-      if(snapshot.connectionState == ConnectionState.done)
-//        bloc.refreshNoLocation(searchRadius, searchDays);
-        return Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            title: Text(widget.title),
-          ),
-          body: Center(
-              child: Column(
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
-                        child: RaisedButton(
-                            onPressed: (){
-                              _daysPicker();
-                            },
-                            color: Theme
-                                .of(context)
-                                .accentColor,
-                            child: Text("${searchDays.toString()} days", textAlign: TextAlign.center,)
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
-                        child: RaisedButton(
-                            onPressed: (){
-                              _distancePicker();
-                            },
-                            color: Theme
-                                .of(context)
-                                .accentColor,
-                            child: Text("${searchRadius.toString()} km", textAlign: TextAlign.center,)
-                        ),
-                      ),
-                    ],),
-                  Expanded(
-                    child: magicTest(bloc),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
+                    child: RaisedButton(
+                        onPressed: (){
+                          _daysPicker();
+                        },
+                        color: Theme
+                            .of(context)
+                            .accentColor,
+                        child: Text("${searchDays.toString()} days", textAlign: TextAlign.center,)
+                    ),
                   ),
-                ],
-              )
-          ),
-        );
-      return Text("Loading");
-    },);
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
+                    child: RaisedButton(
+                        onPressed: (){
+                          _distancePicker();
+                        },
+                        color: Theme
+                            .of(context)
+                            .accentColor,
+                        child: Text("${searchRadius.toString()} km", textAlign: TextAlign.center,)
+                    ),
+                  ),
+                ],),
+              Expanded(
+                child: birdListBuilder(bloc),
+              ),
+            ],
+          )
+      ),
+    );
   }
 }

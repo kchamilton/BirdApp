@@ -59,16 +59,16 @@ class Bloc {
       if (httpResponse.statusCode == 200) {
         // If the call to the server was successful, parse the JSON
         var responseJSON = json.decode(httpResponse.body);
-        debugPrint("TestOutput" + responseJSON.toString());
+//        debugPrint("TestOutput" + responseJSON.toString());
         for (var record in responseJSON) {
           double distanceInMeters =
               await Geolocator().distanceBetween(latitude, longitude, record["lat"], record["lng"]);
-          print(distanceInMeters.toString());
+//          print(distanceInMeters.toString());
           birdList.add(Bird.fromJson(record, distanceInMeters));
         }
         return birdList;
       }
-      print(request);
+//      print(request);
       print("Request $request Returned # ${httpResponse.statusCode.toString()} -- ${httpResponse.body.toString()}");
 
     }
